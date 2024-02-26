@@ -1,0 +1,11 @@
+---
+# defaults file for hotel_api
+
+
+image_name: "registry.clo5.local/hotelapi"
+
+build_path: "/home/painkiller/CLO5/group-1000285/api/hotelerie_api/"
+
+dockerfile_path: "/home/painkiller/CLO5/group-1000285/api/hotelerie_api/Dockerfile"
+
+hotel_api_chart: helm upgrade --install --atomic --cleanup-on-fail -n application --create-namespace hotelapi /home/painkiller/CLO5/group-1000285/Helmcharts/hotelapi --debug

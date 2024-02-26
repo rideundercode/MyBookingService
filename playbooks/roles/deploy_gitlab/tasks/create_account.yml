@@ -1,0 +1,34 @@
+- name: include default step variables
+  include_vars: ../../../roles/vault.yml
+
+- name: Wait for gitlab to be ready before launching account creation.
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: "Create first admin GitLab User"
+  gitlab_user:
+    api_url: "{{ gitlab_ip }}"
+    api_token: "{{ vault_gitlab_token }}"
+    name: rafina_d
+    username: rafina_d
+    email: rafina_d@email.com
+    password: "{{ vault_rafina_d_password }}"
+    state: present
+    access_level: owner
+    isadmin: true
+    confirm: false
+
+
+- name: "Create second admin GitLab User"
+  gitlab_user:
+    api_url: "{{ gitlab_ip }}"
+    api_token: "{{ vault_gitlab_token }}"
+    name: rinaz_a
+    username: rinaz_a
+    email: rinaz_a@email.com
+    password: "{{ vault_rinaz_a_password }}"
+    state: present
+    access_level: owner
+    isadmin: true
+    confirm: false
+    

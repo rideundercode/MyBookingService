@@ -1,0 +1,12 @@
+---
+# defaults file for deploy_gitlab
+
+#install related
+gitlab_install_script_url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh"
+
+gitlab_package:
+  - gitlab-ce
+
+gitlab_external: http://gitlabserver.clo5.com:7000
+gitlab_ip: "http://172.16.228.23"
+nginx_listen_port: "7000"

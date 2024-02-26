@@ -1,0 +1,48 @@
+---
+#- hosts: MASTER
+#  vars:
+#    kube_role: control_plane
+#    kube_node_role: false
+#  roles:
+#    - kube_deploy
+
+#- hosts: WORKER
+#  vars:
+#    kube_node_role: node_deploy
+#    kube_role: false 
+#  roles:
+#    - kube_deploy
+
+- hosts: localhost
+  roles:
+    - ingress-nginx
+
+- hosts: localhost
+  roles:
+    - docker_registry
+
+- hosts: localhost
+  roles:
+    - docker_tickstack
+
+- hosts: localhost
+  roles:
+    - gitlab-runner
+
+- hosts: localhost
+  roles:
+    - mysql
+
+- hosts: localhost
+  roles:
+    - billing_api
+
+- hosts: localhost
+  roles:
+    - resa_api
+
+- hosts: localhost
+  roles:
+    - hotel_api       
+
+

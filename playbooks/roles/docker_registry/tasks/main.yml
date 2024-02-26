@@ -1,0 +1,56 @@
+---
+# tasks file for docker_registry
+
+  - name: include vault vars
+    include_vars: ../../../roles/vault.yml
+
+  - name: Create registry-docker namespace
+    command: sudo kubectl create namespace registry-docker
+    ignore_errors: true
+
+  - name: Create secret for registry cert
+    command: sudo kubectl create secret tls registry-tls --key="{{ key_path }}" --cert="{{ cert_path }}" -n registry-docker
+    ignore_errors: true
+
+  - name: Check secret PullSecret creation
+    command : sudo kubectl get secret regcred  -n registry-docker -o jsonpath="{.data}"
+    register: checksecret
+    ignore_errors: true
+
+  - name: Create secret for PullSecret in order to bypass dockerhub ratelimit
+    command: sudo kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username='{{ vault_dockerhub_login }}' --docker-password='{{ vault_dockerhub_pass }}' --docker-email=jbhonorat92@hotmail.fr -n registry-docker
+    when: checksecret.stdout | length == 0
+
+  - name: Wait for ingress controller to be ready to accept future ingresses.
+    ansible.builtin.pause:
+      minutes: 1
+
+  - name: Launch Helm chart to deploy Docker registry
+    command: "{{ registry_chart }}"
+
+  - name: Retrieve IP of Ingress selected
+    command : kubectl get ingress registry-docker-registrydocker -n registry-docker -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
+    register: ingressaddress
+    until: ingressaddress.stdout | length > 0
+    retries: 40
+    delay: 20
+
+  - name: Create global var on localhost to use ingress address right after
+    set_fact: 
+      registryip: "{{ ingressaddress.stdout }}"
+
+  - name: Make sure to remove 
+    ansible.builtin.lineinfile:
+      path: /etc/hosts
+      state: absent
+      regexp: 'registry.clo5.local' 
+    delegate_to: '{{ item }}'
+    with_items: "{{ groups['ALLHOSTS'] }}"  
+
+  - name: Make sure hosts is in /etc/hosts
+    ansible.builtin.lineinfile:
+      path: /etc/hosts
+      state: present
+      line: "{{ registryip }} registry.clo5.local"
+    delegate_to: '{{ item }}'
+    with_items: "{{ groups['ALLHOSTS'] }}"

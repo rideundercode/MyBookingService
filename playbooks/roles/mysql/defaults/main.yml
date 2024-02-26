@@ -1,0 +1,11 @@
+---
+# defaults file for docker_registry
+
+
+image_name: "registry.clo5.local/mysql"
+
+build_path: "/home/painkiller/CLO5/group-1000285/databases/mysql/"
+
+dockerfile_path: "/home/painkiller/CLO5/group-1000285/databases/mysql/Dockerfile"
+
+mysql_helm_chart: helm upgrade --install --atomic --cleanup-on-fail -n application --create-namespace mysqldb /home/painkiller/CLO5/group-1000285/Helmcharts/mysql --debug

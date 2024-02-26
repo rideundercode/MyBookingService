@@ -1,0 +1,5 @@
+Host 172.16.228.54
+HostName 172.16.228.54
+User honora_j
+IdentityFile /home/painkiller/.ssh/clo4
+ForwardAgent yes

@@ -1,0 +1,36 @@
+---
+# tasks file for gitlab-runner
+
+- name: Add gitlab Helm repo
+  command: "helm repo add gitlab https://charts.gitlab.io"
+
+#- name: Update Helm repo
+#  command: helm repo update
+
+- name: Retrieve runner token
+  shell : gitlab-rails runner -e production "puts Gitlab::CurrentSettings.current_application_settings.runners_registration_token"
+  delegate_to: '{{ item }}'
+  with_items: "{{ groups['GIT'] }}"
+  register: token_stdout
+
+- name: Register var on localhost
+  debug: var=token_stdout
+  when: token_stdout is defined
+
+- name: inject values template with token var
+  ansible.builtin.template:
+    src: values.j2
+    dest: /home/painkiller/CLO5/group-1000285/playbooks/roles/gitlab-runner/templates/values.yaml
+    owner: root
+    group: root
+    mode: "0600"  
+
+- name: Launch runner install with modified values
+  command: helm upgrade --install --create-namespace --namespace gitlab-runner -f /home/painkiller/CLO5/group-1000285/playbooks/roles/gitlab-runner/templates/values.yaml gitlab-runner gitlab/gitlab-runner
+
+- name: add cluster role for service runner account to reach other namespaces
+  command: kubectl create clusterrolebinding gitlab-runner-binding --clusterrole=cluster-admin --serviceaccount=gitlab-runner:gitlab-runner
+  ignore_errors: true
+
+
+

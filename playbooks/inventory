@@ -1,0 +1,30 @@
+[MASTER]
+172.16.228.54
+
+[WORKER]
+172.16.228.90
+172.16.228.23
+
+[GIT]
+172.16.228.23
+
+[ALLHOSTS]
+172.16.228.54
+172.16.228.90
+172.16.228.23
+
+[MASTER:vars]
+ansible_ssh_user=honora_j
+ansible_ssh_common_args='-F /home/painkiller/CLO5/group-1000285/ssh_config/master'
+
+[WORKER:vars]
+ansible_ssh_user=honora_j
+ansible_ssh_common_args='-F /home/painkiller/CLO5/group-1000285/ssh_config/worker'
+
+[GIT:vars]
+ansible_ssh_user=honora_j
+ansible_ssh_common_args='-F /home/painkiller/CLO5/group-1000285/ssh_config/master'
+
+[ALLHOSTS:vars]
+ansible_ssh_user=honora_j
+ansible_ssh_common_args='-F /home/painkiller/CLO5/group-1000285/ssh_config/master'

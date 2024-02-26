@@ -1,0 +1,10 @@
+---
+# defaults file for docker_tickstack
+
+influxdisk_chart: helm upgrade --install  --atomic --cleanup-on-fail -n tick-stack --create-namespace tick-stack-influx-vol /home/painkiller/CLO5/group-1000285/Helmcharts/diskinflux --debug
+
+influxdb_chart: helm upgrade --install  --atomic --cleanup-on-fail -n tick-stack --create-namespace tick-stack-influx /home/painkiller/CLO5/group-1000285/Helmcharts/influxdb --debug
+
+telegraf_chart: helm upgrade --install  --atomic --cleanup-on-fail -n tick-stack --create-namespace tick-stack-telegraf /home/painkiller/CLO5/group-1000285/Helmcharts/telegraf-ds --debug 
+
+values_template_dest: /home/painkiller/CLO5/group-1000285/Helmcharts/influxdb/values.yaml

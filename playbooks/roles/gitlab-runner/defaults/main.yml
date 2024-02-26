@@ -1,0 +1,7 @@
+---
+# defaults file for gitlab-runner
+
+
+gitlab_external: http://gitlabserver.clo5.com
+gitlab_ip: "http://172.16.228.23"
+

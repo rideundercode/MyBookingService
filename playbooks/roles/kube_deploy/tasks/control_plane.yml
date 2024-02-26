@@ -1,0 +1,45 @@
+---
+
+  - name: Initialize the Kubernetes cluster using kubeadm
+    command: kubeadm init --apiserver-advertise-address="{{ master_ip }}" --apiserver-cert-extra-sans="{{ master_ip }}"  --node-name vm054 --pod-network-cidr="{{ pod_network_cidr }}"
+
+  - name: Setup kubeconfig for user
+    command: "{{ item }}"
+    with_items:
+     - mkdir -p /home/honora_j/.kube
+     - cp /etc/kubernetes/admin.conf /home/honora_j/.kube/config
+     - chown honora_j:honora_j /home/honora_j/.kube/config
+
+  - name: Install calico pod network
+    become: false
+    command: "{{ calico_install }}"
+
+  - name: Generate join command
+    command: kubeadm token create --print-join-command
+    register: join_command
+
+  - name: Copy join command to local file
+    become: false 
+    local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"  
+
+
+  - name: Copying admin.conf locally for helm chart to be launched
+    ansible.builtin.fetch:
+      src: /etc/kubernetes/admin.conf
+      dest: /root/.kube/config
+      flat: yes
+
+  - name: Remove Taint
+    become: false
+    command: kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+  - name: inject containerd config template to add insecure registries to cri.
+    ansible.builtin.template:
+      src: containerd.toml.j2
+      dest: /etc/containerd/config.toml
+      owner: root
+      group: root
+      mode: "0600"
+
+  - name: "restart services"  
+    meta: flush_handlers

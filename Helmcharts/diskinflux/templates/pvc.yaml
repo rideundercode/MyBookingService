@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "diskinflux.fullname" . }}
+  labels:
+    {{- include "diskinflux.labels" . | nindent 4 }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: {{ include "diskinflux.fullname" . }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.resources.requests.storage }}

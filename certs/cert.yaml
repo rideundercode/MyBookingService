@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  cert.crt: '{{ vault_crt_base64 }}'
+  cert.key: '{{ vault_key_base64 }}'
+ kind: Secret
+metadata:
+  name: registry-tls
+  namespace: registry-docker
+type: kubernetes.io/tls

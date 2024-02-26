@@ -1,0 +1,11 @@
+---
+# defaults file for resa_api
+
+
+image_name: "registry.clo5.local/reservationapi"
+
+build_path: "/home/painkiller/CLO5/group-1000285/api/reservation_api/"
+
+dockerfile_path: "/home/painkiller/CLO5/group-1000285/api/reservation_api/Dockerfile"
+
+resa_api_chart: helm upgrade --install --atomic --cleanup-on-fail -n application --create-namespace reservationapi /home/painkiller/CLO5/group-1000285/Helmcharts/reservationapi --debug

@@ -1,0 +1,6 @@
+---
+# tasks file for deploy_gitlab
+  
+  - include_tasks: git_install.yml
+
+  - include_tasks: create_account.yml

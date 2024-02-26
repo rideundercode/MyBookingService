@@ -1,0 +1,15 @@
+#- hosts: localhost
+#  roles:
+#    - mysql
+
+- hosts: localhost
+  roles:
+    - billing_api
+
+#- hosts: localhost
+#  roles:
+#    - resa_api
+
+#- hosts: localhost
+#  roles:
+#    - hotel_api

@@ -1,0 +1,9 @@
+---
+# tasks file for ingress-nginx
+
+ - name: Launch Helm chart to deploy Ingress-Nginx
+   command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
+
+ - name: Patch ingress nginx deployment to use loadbalancing on node ip
+   command: kubectl patch deployment ingress-nginx-controller -n ingress-nginx -p '{"spec":{"template":{"spec":{"hostNetwork":true}}}}'
+

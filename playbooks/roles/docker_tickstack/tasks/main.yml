@@ -1,0 +1,47 @@
+---
+# tasks file for docker_tickstack
+
+  - name: include vault vars
+    include_vars: ../../../roles/vault.yml
+ 
+  - name: Pull TICK stack v2 (Influx)
+    docker_image:
+      name: "influxdb:2.3.0-alpine"
+      source: pull
+
+  - name: Pull TICK stack v2 (Telegraf)
+    docker_image:
+      name: "telegraf:1.26-alpine"
+      source: pull      
+
+  - name: Tag and push Influx to internal registry
+    docker_image:
+      name: influxdb
+      repository: registry.clo5.local/influxdb
+      tag: 2.3.0-alpine
+      push: true
+
+  - name: Tag and push Telegraf to internal registry
+    docker_image:
+      name: telegraf
+      repository: registry.clo5.local/telegraf
+      tag: 1.26-alpine
+      push: true
+
+  - name: inject values template with token var
+    ansible.builtin.template:
+      src: values_influx.j2
+      dest: "{{ values_template_dest }}"
+      owner: painkiller
+      group: painkiller
+      mode: "0600"        
+
+  - name: Launch Helm chart to deploy Influx pv/pvc
+    command: "{{ influxdisk_chart }}"
+
+  - name: Launch Helm chart to deploy Influx 
+    command: "{{ influxdb_chart }}" 
+
+  - name: Launch Helm chart to deploy Telegraf
+    command: "{{ telegraf_chart }}"
+

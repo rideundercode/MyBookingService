@@ -1,0 +1,24 @@
+---
+# handlers file for kube_deploy
+
+  - name: docker status
+    service: name=docker state=started
+
+  - name: enable kubelet service
+    service:
+      name: kubelet
+      enabled: yes
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
+
+  - name: Restart containerd service
+    service:
+      name: containerd
+      state: restarted
+
+  
+

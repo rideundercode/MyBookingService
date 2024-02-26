@@ -1,0 +1,10 @@
+---
+# defaults file for billing_api
+
+image_name: "registry.clo5.local/billingapi"
+
+build_path: "/home/painkiller/CLO5/group-1000285/api/billing_api/"
+
+dockerfile_path: "/home/painkiller/CLO5/group-1000285/api/billing_api/Dockerfile"
+
+billing_api_chart: helm upgrade --install --atomic --cleanup-on-fail -n application --create-namespace billingapi /home/painkiller/CLO5/group-1000285/Helmcharts/billingapi --debug

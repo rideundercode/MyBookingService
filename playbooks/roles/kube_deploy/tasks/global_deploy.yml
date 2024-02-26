@@ -1,0 +1,73 @@
+---
+# tasks file for kube_deploy
+
+  - name: Install packages
+    apt:
+      name: "{{ global_packages }}"
+      state: present
+      update_cache: yes
+
+  - name: add Docker repo
+    shell: "{{ docker_repo_add }}"
+
+  - name: apt update
+    apt:
+      update_cache: yes  
+
+  - name: Install docker and its dependecies
+    apt: 
+      name: "{{ docker_and_dependencies }}"
+      state: present
+      update_cache: yes
+    notify:
+      - docker status     
+  
+  - name: modprobe
+    command: sudo modprobe br_netfilter
+
+  - name: ipv4 forward activation
+    command: sudo sysctl -w net.ipv4.ip_forward=1    
+
+  - name: net-bridge-docker
+    command: sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      name: "{{ item }}"
+      fstype: swap
+      state: absent
+    with_items:
+      - swap
+      - none
+
+  - name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0
+
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: "{{ gpg_key }}"
+      state: present
+
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
+
+  - name: Install Kubernetes binaries(specify cri-tools downgrade before kubeadm install to avoid containerd cri plugin issue on cri 1.26)
+    apt: 
+      name: "{{ kube_and_dependencies }}"
+      state: present
+      update_cache: yes
+
+  - name: inject containerd config template to add insecure registries to cri.
+    ansible.builtin.template:
+      src: containerd.toml.j2
+      dest: /etc/containerd/config.toml
+      owner: root
+      group: root
+      mode: "0600"      
+
+  - name: "restart services"  
+    meta: flush_handlers

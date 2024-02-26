@@ -1,0 +1,20 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ template "mysql.fullname" . }}
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  annotations: 
+    "helm.sh/hook": pre-install
+  labels:
+    app: {{ template "mysql.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+spec:
+  capacity:
+    storage: {{ .Values.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: {{ .Values.volumes.server }}
+    path:   {{ .Values.volumes.path }}
+  storageClassName: {{ .Values.persistence.storageClassName }}

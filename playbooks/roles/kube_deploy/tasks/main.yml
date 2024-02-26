@@ -1,0 +1,12 @@
+---
+# tasks file for kube_deploy
+
+- include_tasks: global_deploy.yml
+
+- include_tasks: control_plane.yml
+  when: kube_role == 'control_plane'
+
+- include_tasks: node_deploy.yml
+  when: kube_node_role == 'node_deploy'
+
+  

@@ -1,0 +1,16 @@
+---
+# tasks file for billing_api
+
+  - name: Build Docker image
+    docker_image:
+      name: "{{ image_name }}"
+      path: "{{ build_path }}"
+      dockerfile: "{{ dockerfile_path }}"
+
+  - name: Push Docker image to registry
+    docker_image:
+      name: "{{ image_name }}"
+      push: yes
+
+  - name: Launch Helm chart to deploy billing api
+    command: "{{ billing_api_chart }}"   

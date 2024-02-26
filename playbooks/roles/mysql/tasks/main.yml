@@ -1,0 +1,18 @@
+---
+# tasks file for docker_registry
+  - name: Install docker-py
+    command: pip install docker-py
+
+  - name: Build Docker image
+    docker_image:
+      name: "{{ image_name }}"
+      path: "{{ build_path }}"
+      dockerfile: "{{ dockerfile_path }}"
+
+  - name: Push Docker image to registry
+    docker_image:
+      name: "{{ image_name }}"
+      push: yes
+
+  - name: Launch Helm chart to deploy Mysql
+    command: "{{ mysql_helm_chart }}"
